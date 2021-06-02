@@ -102,12 +102,14 @@ class AStarSearch {
      * @param {*} cheest titik akhir
      */
     search(mouse, cheese) {
-      this._checkXYCoordinate(mouse)
-      this._checkXYCoordinate(cheese)
+      // this._checkXYCoordinate(mouse)
+      // this._checkXYCoordinate(cheese)
 
-      this._checkNode(mouse)
-      this._checkNode(cheese)
+      // this._checkNode(mouse)
+      // this._checkNode(cheese)
 
+      this._mouse = mouse
+      this._cheese = cheese
       this._pqueue.push(this._mouse)
 
       this._search()
