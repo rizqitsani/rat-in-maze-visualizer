@@ -132,10 +132,9 @@ export default class AStarSearch {
         
         let node = nodePqueue.node
         if (node.isWall) continue
-        console.log('traversed', `${node.row},${node.col} distance ${nodePqueue.distance + AStarSearch._manhattanDistance(node, nodePqueue.dest)}`)
+        // console.log('traversed', `${node.row},${node.col} distance ${nodePqueue.distance + AStarSearch._manhattanDistance(node, nodePqueue.dest)}`)
         if (this._visited[`${node.row},${node.col}`] !== undefined) {
-          if (AStarSearch._calcDistFunc(this._visited[`${node.row},${node.col}`], nodePqueue.dest) < AStarSearch._calcDistFunc(nodePqueue, nodePqueue.dest)) {
-            
+          if (this._visited[`${node.row},${node.col}`].distance < nodePqueue.distance) {
             /**
              * Tidak perlu expand ulang, algoritma tidak tertarik
              * dengan jarak yang lebih jauh
@@ -145,7 +144,6 @@ export default class AStarSearch {
         }
 
         this._visited[`${node.row},${node.col}`] = {
-          node: nodePqueue.node,
           distance: nodePqueue.distance,
           from: (nodePqueue.from === undefined)? null : nodePqueue.from
         }
@@ -159,10 +157,10 @@ export default class AStarSearch {
         }
 
         let neighbors = this._getNeighbor(node)
-        console.log('neighbors', `${node.row},${node.col}`, neighbors)
+        // console.log('neighbors', `${node.row},${node.col}`, neighbors)
         neighbors.forEach(child => {
           if (this._visited[`${child.row},${child.col}`] !== undefined) {
-            if (AStarSearch._calcDistFunc(this._visited[`${node.row},${node.col}`], nodePqueue.dest) < AStarSearch._calcDistFunc(nodePqueue, nodePqueue.dest) + 1) {
+            if (this._visited[`${child.row},${child.col}`].distance < nodePqueue.distance + 1) {
               /**
                * Tidak perlu ditambah ke pqueue, algoritma tidak tertarik
                * dengan jarak yang lebih jauh
@@ -183,7 +181,6 @@ export default class AStarSearch {
     _extractRoute() {
       let node = `${this._cheese.row},${this._cheese.col}`
       while (node) {
-        console.log(node);
         this._route.push(this._visited[node])
         node = this._visited[node].from
       }
@@ -277,7 +274,7 @@ export default class AStarSearch {
       let below = this._getBelow(node)
 
 
-      console.log('neighbors', `${node.row},${node.col}`, left, right, above, below)
+      // console.log('neighbors', `${node.row},${node.col}`, left, right, above, below)
       let neighbors = []
       if (left && !left.isWall) neighbors.push(left)
       if (right && !right.isWall) neighbors.push(right)
