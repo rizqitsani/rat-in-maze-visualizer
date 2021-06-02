@@ -135,8 +135,8 @@ const App = () => {
   const visualizeAStar = () => {
     if (grid.length === 0) return;
 
-    const startNode = grid[mousePosition.y][mousePosition.x];
-    const finishNode = grid[cheesePosition.y][cheesePosition.x];
+    const startNode = grid[mousePosition.x - 1][mousePosition.y - 1];
+    const finishNode = grid[cheesePosition.x - 1][cheesePosition.y - 1];
 
     const algorithm = new AStar();
 
@@ -147,8 +147,8 @@ const App = () => {
       finishNode
     );
 
-    // const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
-    this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+    // // const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
+    animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
   };
 
   return (
@@ -168,13 +168,13 @@ const App = () => {
         <div className='space-x-4'>
           <button
             className='px-4 py-2 text-sm font-medium text-white bg-lightblue-600 border border-transparent rounded-md shadow-sm hover:bg-lightblue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lightblue-500'
-            onClick={visualizeAStar()}
+            onClick={() => visualizeAStar()}
           >
             Visualize A* Search
           </button>
           <button
             className='px-4 py-2 text-sm font-medium text-lightblue-600 border-2 border-lightblue-600 rounded-md shadow-sm hover:text-white hover:bg-lightblue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lightblue-500'
-            onClick={visualizeAStar()}
+            onClick={() => visualizeAStar()}
           >
             Reset
           </button>
