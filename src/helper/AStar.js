@@ -121,6 +121,8 @@ export default class AStarSearch {
       })
 
       this._search()
+      delete this._visited[`${this._mouse.row},${this._mouse.col}`]
+      delete this._visited[`${this._cheese.row},${this._cheese.col}`]
       return [Object.keys(this._visited), this._route]
     }
 
@@ -180,7 +182,9 @@ export default class AStarSearch {
     _extractRoute() {
       let node = `${this._cheese.row},${this._cheese.col}`
       while (node) {
-        this._route.push(node)
+        if (node !== `${this._cheese.row},${this._cheese.col}` && node != `${this._mouse.row},${this._mouse.col}`) {
+          this._route.push(node)
+        }
         node = this._visited[node].from
       }
     }
