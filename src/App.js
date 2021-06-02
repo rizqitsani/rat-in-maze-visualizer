@@ -4,6 +4,8 @@ import './App.css';
 import Input from './components/Input/Input';
 import Node from './components/Node/Node';
 
+import AStar from './helper/AStar';
+
 const getNewGridWithWallToggled = (grid, row, col) => {
   const newGrid = grid.slice();
   const node = newGrid[row][col];
@@ -24,9 +26,9 @@ const App = () => {
   useEffect(() => {
     const getInitialGrid = () => {
       const grid = [];
-      for (let row = 1; row <= 10; row++) {
+      for (let row = 0; row < 10; row++) {
         const currentRow = [];
-        for (let col = 1; col <= 10; col++) {
+        for (let col = 0; col < 10; col++) {
           currentRow.push(createNode(col, row));
         }
         grid.push(currentRow);
@@ -35,12 +37,11 @@ const App = () => {
     };
 
     const createNode = (col, row) => {
-      if (col === row) console.log(row, mousePosition.x);
       return {
         col,
         row,
-        isStart: row === mousePosition.x && col === mousePosition.y,
-        isFinish: row === cheesePosition.x && col === cheesePosition.y,
+        isStart: row === mousePosition.x - 1 && col === mousePosition.y - 1,
+        isFinish: row === cheesePosition.x - 1 && col === cheesePosition.y - 1,
         distance: Infinity,
         isVisited: false,
         isWall: false,
@@ -105,40 +106,50 @@ const App = () => {
     setIsMousePressed(false);
   };
 
-  // const animateDijkstra = (visitedNodesInOrder, nodesInShortestPathOrder) => {
-  //   for (let i = 0; i <= visitedNodesInOrder.length; i++) {
-  //     if (i === visitedNodesInOrder.length) {
-  //       setTimeout(() => {
-  //         animateShortestPath(nodesInShortestPathOrder);
-  //       }, 10 * i);
-  //       return;
-  //     }
-  //     setTimeout(() => {
-  //       const node = visitedNodesInOrder[i];
-  //       document.getElementById(`node-${node.row}-${node.col}`).className =
-  //         'node node-visited';
-  //     }, 10 * i);
-  //   }
-  // };
+  const animateDijkstra = (visitedNodesInOrder, nodesInShortestPathOrder) => {
+    for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+      if (i === visitedNodesInOrder.length) {
+        setTimeout(() => {
+          animateShortestPath(nodesInShortestPathOrder);
+        }, 10 * i);
+        return;
+      }
+      setTimeout(() => {
+        const node = visitedNodesInOrder[i];
+        document.getElementById(`node-${node.row}-${node.col}`).className =
+          'node node-visited';
+      }, 10 * i);
+    }
+  };
 
-  // const animateShortestPath = (nodesInShortestPathOrder) => {
-  //   for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
-  //     setTimeout(() => {
-  //       const node = nodesInShortestPathOrder[i];
-  //       document.getElementById(`node-${node.row}-${node.col}`).className =
-  //         'node node-shortest-path';
-  //     }, 50 * i);
-  //   }
-  // };
+  const animateShortestPath = (nodesInShortestPathOrder) => {
+    for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
+      setTimeout(() => {
+        const node = nodesInShortestPathOrder[i];
+        document.getElementById(`node-${node.row}-${node.col}`).className =
+          'node node-shortest-path';
+      }, 50 * i);
+    }
+  };
 
-  // const visualizeDijkstra = () => {
-  //   const { grid } = this.state;
-  //   const startNode = grid[START_NODE_ROW][START_NODE_COL];
-  //   const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
-  //   const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
-  //   const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
-  //   this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
-  // };
+  const visualizeAStar = () => {
+    if (grid.length === 0) return;
+
+    const startNode = grid[mousePosition.y][mousePosition.x];
+    const finishNode = grid[cheesePosition.y][cheesePosition.x];
+
+    const algorithm = new AStar();
+
+    algorithm.elMap = grid;
+
+    const [visitedNodesInOrder, nodesInShortestPathOrder] = algorithm.search(
+      startNode,
+      finishNode
+    );
+
+    // const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
+    this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+  };
 
   return (
     <div className='App'>
@@ -157,13 +168,13 @@ const App = () => {
         <div className='space-x-4'>
           <button
             className='px-4 py-2 text-sm font-medium text-white bg-lightblue-600 border border-transparent rounded-md shadow-sm hover:bg-lightblue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lightblue-500'
-            onClick={() => this.visualizeDijkstra()}
+            onClick={visualizeAStar()}
           >
             Visualize A* Search
           </button>
           <button
             className='px-4 py-2 text-sm font-medium text-lightblue-600 border-2 border-lightblue-600 rounded-md shadow-sm hover:text-white hover:bg-lightblue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lightblue-500'
-            onClick={() => this.visualizeDijkstra()}
+            onClick={visualizeAStar()}
           >
             Reset
           </button>
