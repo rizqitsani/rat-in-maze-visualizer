@@ -134,9 +134,10 @@ export default class AStarSearch {
         if (node.isWall) continue
         console.log('traversed', `${node.row},${node.col} distance ${nodePqueue.distance + AStarSearch._manhattanDistance(node, nodePqueue.dest)}`)
         if (this._visited[`${node.row},${node.col}`] !== undefined) {
-          if (this._visited[`${node.row},${node.col}`].distance < nodePqueue.distance) {
+          if (AStarSearch._calcDistFunc(this._visited[`${node.row},${node.col}`], nodePqueue.dest) < AStarSearch._calcDistFunc(nodePqueue, nodePqueue.dest)) {
+            
             /**
-             * Tidak perlu ditambah ke pqueue, algoritma tidak tertarik
+             * Tidak perlu expand ulang, algoritma tidak tertarik
              * dengan jarak yang lebih jauh
              */
             continue
@@ -144,6 +145,7 @@ export default class AStarSearch {
         }
 
         this._visited[`${node.row},${node.col}`] = {
+          node: nodePqueue.node,
           distance: nodePqueue.distance,
           from: (nodePqueue.from === undefined)? null : nodePqueue.from
         }
@@ -159,6 +161,15 @@ export default class AStarSearch {
         let neighbors = this._getNeighbor(node)
         console.log('neighbors', `${node.row},${node.col}`, neighbors)
         neighbors.forEach(child => {
+          if (this._visited[`${child.row},${child.col}`] !== undefined) {
+            if (AStarSearch._calcDistFunc(this._visited[`${node.row},${node.col}`], nodePqueue.dest) < AStarSearch._calcDistFunc(nodePqueue, nodePqueue.dest) + 1) {
+              /**
+               * Tidak perlu ditambah ke pqueue, algoritma tidak tertarik
+               * dengan jarak yang lebih jauh
+               */
+              return
+            }
+          }
           this._pqueue.push({
             from: `${node.row},${node.col}`,
             node: child,
