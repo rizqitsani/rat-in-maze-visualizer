@@ -132,7 +132,7 @@ export default class AStarSearch {
         
         let node = nodePqueue.node
         if (node.isWall) continue
-        // console.log('traversed', `${node.row},${node.col} distance ${nodePqueue.distance + AStarSearch._manhattanDistance(node, this._cheese)}`)
+        console.log('traversed', `${node.row},${node.col} distance ${nodePqueue.distance + AStarSearch._manhattanDistance(node, nodePqueue.dest)}`)
         if (this._visited[`${node.row},${node.col}`] !== undefined) {
           if (this._visited[`${node.row},${node.col}`].distance < nodePqueue.distance) {
             /**
@@ -152,6 +152,7 @@ export default class AStarSearch {
           this._found = true
           this._extractRoute()
           console.log('found', nodePqueue)
+          console.log('route', this._route);
           break
         }
 
@@ -175,7 +176,6 @@ export default class AStarSearch {
         this._route.push(this._visited[node])
         node = this._visited[node].from
       }
-      console.log(this._route);
     }
 
     _getLeft(node) {
@@ -217,8 +217,9 @@ export default class AStarSearch {
      * @returns boolean
      */
     static _comparePqueue(node1, node2) {
-      if (node2 === undefined) return true;
-      return AStarSearch._calcDistFunc(node1, node1.dest) <= AStarSearch._calcDistFunc(node2, node2.dest)
+      let a = AStarSearch._calcDistFunc(node1, node1.dest)
+      let b = AStarSearch._calcDistFunc(node2, node2.dest)
+      return a < b ? -1 : a > b ? 1 : 0;
     }
 
     static _calcDistFunc(nodePqueue, cheese) {
@@ -267,10 +268,10 @@ export default class AStarSearch {
 
       console.log('neighbors', `${node.row},${node.col}`, left, right, above, below)
       let neighbors = []
-      if (left) neighbors.push(left)
-      if (right) neighbors.push(right)
-      if (above) neighbors.push(above)
-      if (below) neighbors.push(below)
+      if (left && !left.isWall) neighbors.push(left)
+      if (right && !right.isWall) neighbors.push(right)
+      if (above && !above.isWall) neighbors.push(above)
+      if (below && !below.isWall) neighbors.push(below)
 
       return neighbors
     }
