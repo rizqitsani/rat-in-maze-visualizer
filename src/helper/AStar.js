@@ -121,8 +121,7 @@ export default class AStarSearch {
       })
 
       this._search()
-      // return [Object.keys(this._visited), this._route]
-      return [Object.keys(this._visited), []]
+      return [Object.keys(this._visited), this._route]
     }
 
     _search() {
@@ -181,7 +180,7 @@ export default class AStarSearch {
     _extractRoute() {
       let node = `${this._cheese.row},${this._cheese.col}`
       while (node) {
-        this._route.push(this._visited[node])
+        this._route.push(node)
         node = this._visited[node].from
       }
     }
