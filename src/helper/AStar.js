@@ -35,7 +35,7 @@ export default class AStarSearch {
     _found = null
 
     /**
-     * @var TinyQueue {node:Node, from:Node, distance:Number}
+     * @var TinyQueue {node:Node, from:Node, distance:Number, dest:dest}
      */
     _pqueue = null
 
@@ -67,7 +67,7 @@ export default class AStarSearch {
       this._mouse = null
       this._cheese = null
       this._visited = {}
-      this._pqueue = new TinyQueue([], this._comparePqueue)
+      this._pqueue = new TinyQueue([], AStarSearch._comparePqueue)
     }
 
     /**
@@ -86,6 +86,7 @@ export default class AStarSearch {
     }
 
     set elMap(elMap) {
+      console.log(elMap)
       if (!Array.isArray(elMap)) {
           throw new Error("Map bukan array")
       }
@@ -110,84 +111,100 @@ export default class AStarSearch {
 
       this._mouse = mouse
       this._cheese = cheese
-      this._pqueue.push(this._mouse)
+      console.log('mouse', this._mouse)
+      console.log('cheese', this._cheese)
+      this._pqueue.push({
+        from: null,
+        node: this._mouse,
+        distance: 0,
+        dest: cheese
+      })
 
       this._search()
-      return [Object.keys(this._visited), this._route]
+      // return [Object.keys(this._visited), this._route]
+      return [Object.keys(this._visited), []]
     }
 
     _search() {
       while (this._pqueue.length > 0) {
         let nodePqueue = this._pqueue.pop()
-        console.log(nodePqueue)
-        if (nodePqueue === undefined) break;
-
+        if (nodePqueue === undefined) break; // Jaga-jaga saja
+        
         let node = nodePqueue.node
-        nodePqueue.distance++
-        if (this._visited[node] !== undefined) {
-          if (this._visited[node].distance > nodePqueue.distance) {
-            this._visited[node].distance = nodePqueue.distance
-            this._visited[node].from = nodePqueue.from
-          }
-
-        } else {
-          this._visited[node] = {
-            distance: this._calcDistFunc(nodePqueue),
-            from: (nodePqueue.from === undefined)? null : nodePqueue.from
+        if (node.isWall) continue
+        // console.log('traversed', `${node.row},${node.col} distance ${nodePqueue.distance + AStarSearch._manhattanDistance(node, this._cheese)}`)
+        if (this._visited[`${node.row},${node.col}`] !== undefined) {
+          if (this._visited[`${node.row},${node.col}`].distance < nodePqueue.distance) {
+            /**
+             * Tidak perlu ditambah ke pqueue, algoritma tidak tertarik
+             * dengan jarak yang lebih jauh
+             */
+            continue
           }
         }
 
-        if (node === this._cheese) {
+        this._visited[`${node.row},${node.col}`] = {
+          distance: nodePqueue.distance,
+          from: (nodePqueue.from === undefined)? null : nodePqueue.from
+        }
+
+        if (node.isFinish) {
           this._found = true
-          this._extractRoute(node)
+          this._extractRoute()
+          console.log('found', nodePqueue)
           break
         }
 
         let neighbors = this._getNeighbor(node)
+        console.log('neighbors', `${node.row},${node.col}`, neighbors)
         neighbors.forEach(child => {
           this._pqueue.push({
-            from: node,
+            from: `${node.row},${node.col}`,
             node: child,
-            distance: nodePqueue.distance + 1 + AStarSearch._manhattanDistance(child, this._cheese)
+            distance: nodePqueue.distance + 1,
+            dest: this._cheese
           })
         })
       }
     }
 
-    _extractRoute(node) {
-      node = this._visited[node]
-      while (node.from !== null) {
-        this._route.push(node)
+    _extractRoute() {
+      let node = `${this._cheese.row},${this._cheese.col}`
+      while (node) {
+        console.log(node);
+        this._route.push(this._visited[node])
+        node = this._visited[node].from
       }
+      console.log(this._route);
     }
 
-    _getLeft(position) {
-      if (position.col - 1 >= 0) {
-        return this._elMap[position.row][position.col - 1]
-      }
-
-      return null
-    }
-
-    _getRight(position) {
-      if (position.col + 1 >= this._elMap[0].length) {
-        return this._elMap[position.row][position.col + 1]
+    _getLeft(node) {
+      if (node.row - 1 >= 0) {
+        return this._elMap[node.row - 1][node.col]
       }
 
       return null
     }
 
-    _getAbove(position) {
-      if (position.row - 1 >= 0) {
-        return this._elMap[position.row - 1][position.col]
+    _getRight(node) {
+      if (node.row + 1 < this._elMap[node.col].length) {
+        return this._elMap[node.row + 1][node.col]
       }
 
       return null
     }
 
-    _getBelow(position) {
-      if (position.col + 1 >= this._elMap.length) {
-        return this._elMap[position.row + 1][position.col]
+    _getAbove(node) {
+      if (node.col - 1 >= 0) {
+        return this._elMap[node.row][node.col - 1]
+      }
+
+      return null
+    }
+
+    _getBelow(node) {
+      if (node.col + 1 < this._elMap.length) {
+        return this._elMap[node.row][node.col + 1]
       }
 
       return null
@@ -199,12 +216,13 @@ export default class AStarSearch {
      * @param {*} node2 
      * @returns boolean
      */
-    _comparePqueue(node1, node2) {
-      return this._calcDistFunc(node1) <= this._calcDistFunc(node2)
+    static _comparePqueue(node1, node2) {
+      if (node2 === undefined) return true;
+      return AStarSearch._calcDistFunc(node1, node1.dest) <= AStarSearch._calcDistFunc(node2, node2.dest)
     }
 
-    _calcDistFunc(nodePqueue) {
-      return nodePqueue.distance + AStarSearch._manhattanDistance(nodePqueue.node, this._cheese)
+    static _calcDistFunc(nodePqueue, cheese) {
+      return nodePqueue.distance + AStarSearch._manhattanDistance(nodePqueue.node, cheese)
     }
 
     static _manhattanDistance(node1, node2) {
@@ -214,8 +232,8 @@ export default class AStarSearch {
       )
     }
 
-    _checkXYCoordinate(position) {
-      if (!position.col || !position.row) {
+    _checkXYCoordinate(node) {
+      if (!node.col || !node.row) {
         throw new Error("Posisi harus obyek yang memiliki key col dan row")
       }
 
@@ -223,19 +241,19 @@ export default class AStarSearch {
         throw new Error("Map masih kosong")
       }
 
-      if (position.col < 0) {
+      if (node.col < 0) {
         throw new Error("Posisi x harus lebih dari 0")
       }
 
-      if (position.row < 0) {
+      if (node.row < 0) {
         throw new Error("Posisi y harus lebih dari 0")
       }
 
-      if (position.col > this._elMap[0].length) {
+      if (node.col > this._elMap[0].length) {
         throw new Error("Posisi x harus kurang dari banyak kolom")
       }
 
-      if (position.row > this._elMap.length) {
+      if (node.row > this._elMap.length) {
         throw new Error("Posisi y harus kurang dari banyak baris")
       }
     }
@@ -246,6 +264,8 @@ export default class AStarSearch {
       let above = this._getAbove(node)
       let below = this._getBelow(node)
 
+
+      console.log('neighbors', `${node.row},${node.col}`, left, right, above, below)
       let neighbors = []
       if (left) neighbors.push(left)
       if (right) neighbors.push(right)
