@@ -106,6 +106,10 @@ const App = () => {
     setIsMousePressed(false);
   };
 
+  const resetBoard = () => {
+    window.location.reload();
+  };
+
   const animateDijkstra = (visitedNodesInOrder, nodesInShortestPathOrder) => {
     for (let i = 0; i <= visitedNodesInOrder.length; i++) {
       if (i === visitedNodesInOrder.length) {
@@ -174,7 +178,7 @@ const App = () => {
           </button>
           <button
             className='px-4 py-2 text-sm font-medium text-lightblue-600 border-2 border-lightblue-600 rounded-md shadow-sm hover:text-white hover:bg-lightblue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lightblue-500'
-            onClick={() => visualizeAStar()}
+            onClick={() => resetBoard()}
           >
             Reset
           </button>
