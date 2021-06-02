@@ -14,7 +14,7 @@ const { default: TinyQueue } = require("tinyqueue")
  * Pencarian menggunakan elemen-elemen yang telah diubah menjadi
  * array 2 dimensi.
  */
-class AStarSearch {
+export default class AStarSearch {
     /**
      * properties, diisi di _init
      */
@@ -74,22 +74,22 @@ class AStarSearch {
      * getter dan setter
      */
     get found() {
-      return this.found
+      return this._found
     }
 
     get route() {
-      return this.route
+      return this._route
     }
 
     get elMap() {
-      return this.elMap
+      return this._elMap
     }
 
     set elMap(elMap) {
       if (!Array.isArray(elMap)) {
           throw new Error("Map bukan array")
       }
-      this.elMap = elMap
+      this._elMap = elMap
     }
 
     reset() {
