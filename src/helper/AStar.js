@@ -148,7 +148,7 @@ export default class AStarSearch {
           this._pqueue.push({
             from: node,
             node: child,
-            distance: nodePqueue.distance + 1 + this._manhattanDistance(child, this._cheese)
+            distance: nodePqueue.distance + 1 + AStarSearch._manhattanDistance(child, this._cheese)
           })
         })
       }
@@ -204,7 +204,7 @@ export default class AStarSearch {
     }
 
     _calcDistFunc(nodePqueue) {
-      return nodePqueue.distance + this._manhattanDistance(nodePqueue.node, this._cheese)
+      return nodePqueue.distance + AStarSearch._manhattanDistance(nodePqueue.node, this._cheese)
     }
 
     static _manhattanDistance(node1, node2) {
