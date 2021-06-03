@@ -1,10 +1,33 @@
-# Getting Started with Create React App
+# Rat in Maze Visualizer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Dibuat oleh:
+- 05111940000045	Muhammad Rizqi Tsani
+- 05111940000144	Jundullah Hanif Robbani
 
-## Available Scripts
+## Disclaimer
 
-In the project directory, you can run:
+Repository ini dibuat guna memenuhi penugasan ETS mata kuliah Kecerdasan Buatan.
+
+## Latar Belakang
+
+- Nostalgia tugas mata kuliah dasar pemrograman
+- Membantu agar informed search lebih mudah dipahami dengan menggunakan visual yang menarik
+
+## Algoritma yang Digunakan
+
+### A* Search
+
+Dalam aplikasi Rat In Maze yang kami buat, digunakan algoritma pathfinding A* untuk mencari rute terdekat berdasarkan lokasi tikus dan keju. Algoritma pathfinding akan mengembangkan rute dari tikus sebagai titik awal dan keju sebagai titik tujuan.
+
+## Alur Kerja
+
+![image](https://user-images.githubusercontent.com/40772378/120597447-4308db80-c46f-11eb-96c6-abca359067e9.png)
+
+## Screenshot Aplikasi
+
+![image](https://user-images.githubusercontent.com/40772378/120597628-7b101e80-c46f-11eb-894c-562df4715e54.png)
+
+## Teknologi
 
 ### `npm start`
 
@@ -68,3 +91,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## Kesimpulan
+
+## Referensi
